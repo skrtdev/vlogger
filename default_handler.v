@@ -5,7 +5,7 @@ import term
 const colors = term.can_show_color_on_stdout()
 
 fn get_level_color(level Level) string {
-	if !vlogger.colors {
+	if !colors {
 		return '$level'.to_upper()
 	}
 	return match level {
@@ -18,8 +18,8 @@ fn get_level_color(level Level) string {
 	} + '$level'.to_upper() + '\033[0m'
 }
 
-pub fn get_colored_terminal_handler() Handler {
+fn get_default_handler(level Level) Handler {
 	return Handler{fn (value string, level Level) {
 		println(get_level_color(level) + ': $value')
-	}}
+	}, level}
 }

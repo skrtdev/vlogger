@@ -11,16 +11,15 @@ pub enum Level {
 
 const levels = [Level.debug, .info, .notice, .warning, .error, .critical]
 
-// const default_logger = Logger{}
+pub const default_logger = Logger{}
 
 pub struct Logger {
-	level Level = .info
-mut:
-	handlers []Handler = [get_colored_terminal_handler()]
+pub mut:
+	handlers []Handler = [get_default_handler(.info)]
 }
 
 fn is_level_relevant(min_level Level, actual_level Level) bool {
-	for level in vlogger.levels {
+	for level in levels {
 		match level {
 			min_level { return true }
 			actual_level { return false }
@@ -30,15 +29,13 @@ fn is_level_relevant(min_level Level, actual_level Level) bool {
 	return false
 }
 
-fn (l Logger) is_level_relevant(actual_level Level) bool {
-	return is_level_relevant(l.level, actual_level)
+pub fn new(level Level) Logger {
+	return Logger{[get_default_handler(level)]}
 }
 
 fn (l Logger) log(value string, level Level) {
-	if l.is_level_relevant(level) {
-		for handler in l.handlers {
-			handler.execute(value, level)
-		}
+	for handler in l.handlers {
+		handler.handle(value, level)
 	}
 }
 
